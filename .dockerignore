@@ -1,0 +1,16 @@
+.git
+.gitignore
+.dockerignore
+Dockerfile
+Makefile
+README.md
+storage/
+
+# Go build artifacts
+*.out
+*.test
+*/coverage.out
+
+# IDEs
+.idea/
+.vscode/
