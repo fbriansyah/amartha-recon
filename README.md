@@ -42,6 +42,53 @@ go run main.go serveHttp
 
 The server will start processing on `http://localhost:8080`.
 
+## Documentation
+
+### 1. Reconciliation Process
+
+This explains the logic, payload, and usage of the Amartha Reconciliation Service process endpoint.
+
+#### Algorithm Overview
+The core reconciliation logic is designed to match System Transactions against Bank Statements based on date, amount, and a specific tolerance window.
+
+- **Grouping and Sorting (Bucketing):** All internal System Transactions are grouped by Date and Amount, then sorted by time (FIFO).
+- **Lookback Calculation:** Finds matches within the Bank Statement Date (T) and the previous day (T-1). If the bank date is a Monday, the lookback expands across the weekend to Friday. 
+- **Exact vs. Tolerance Matching:** Tries an exact match on amount first. If unavailable, allows a Tolerance Limit (currently `5000` discrepancy).
+- **Exception Handling:** Unmatched bank records become `BANK` exceptions; unclaimed system records become `SYSTEM` exceptions.
+
+#### Process API Endpoint
+**Endpoint:** `POST /api/v1/reconciliation/process`
+
+```json
+// Example Request Payload
+{
+    "start_date": "YYYY-MM-DD",
+    "end_date": "YYYY-MM-DD"
+}
+```
+
+---
+
+### 2. Upload Reconciliation File
+
+This flow is used to ingest internal system vs bank reconciliation records as CSV files.
+
+#### Sequence
+1. Client POSTs file to the `/upload/{type}` endpoint.
+2. The endpoint verifies key `file` in the form-data.
+3. It recursively saves the transaction records into the `storage/recon-files/` directory securely prefixed with a unix timestamp timestamp to prevent file collision.
+
+#### Upload API Endpoints
+*   **System Upload:** `POST /api/v1/reconciliation/upload/system`
+*   **Bank Upload:** `POST /api/v1/reconciliation/upload/bank`
+
+```bash
+# Example Request
+curl -X POST http://localhost:8080/api/v1/reconciliation/upload/system \
+  -H "Content-Type: multipart/form-data" \
+  -F "file=@/path/to/system_transactions.csv"
+```
+
 ## Future Improvements (TODOs)
 
 Since this project is currently a Proof of Concept (POC), the following enhancements are recommended before transitioning to a production-ready state:
