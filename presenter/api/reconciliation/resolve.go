@@ -11,12 +11,12 @@ func (h *handler) ResolveException(c *fiber.Ctx) error {
 
 	var req ResolveRequest
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid payload"})
+		return h.SendError(c, fiber.StatusBadRequest, "invalid payload")
 	}
 
 	if err := h.reconciliationSvc.ResolveException(req.ExceptionID, req.Action, req.SystemTrxID); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return h.SendError(c, fiber.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(fiber.Map{"message": "success"})
+	return h.SendSuccess(c, nil)
 }

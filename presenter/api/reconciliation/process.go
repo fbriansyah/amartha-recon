@@ -18,16 +18,16 @@ type ProcessRequest struct {
 func (h *handler) ProcessReconFiles(c *fiber.Ctx) error {
 	var req ProcessRequest
 	if err := c.BodyParser(&req); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid payload"})
+		return h.SendError(c, fiber.StatusBadRequest, "invalid payload")
 	}
 
 	startData, err := time.Parse("2006-01-02", req.StartDate)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid start_date format, expected YYYY-MM-DD"})
+		return h.SendError(c, fiber.StatusBadRequest, "invalid start_date format, expected YYYY-MM-DD")
 	}
 	endDate, err := time.Parse("2006-01-02", req.EndDate)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid end_date format, expected YYYY-MM-DD"})
+		return h.SendError(c, fiber.StatusBadRequest, "invalid end_date format, expected YYYY-MM-DD")
 	}
 	// make enddate cover the whole day
 	endDate = endDate.Add(24 * time.Hour).Add(-time.Second)
@@ -69,7 +69,7 @@ func (h *handler) ProcessReconFiles(c *fiber.Ctx) error {
 
 	result, err := h.reconciliationSvc.Reconcile(systemTrxs, bankStatements)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+		return h.SendError(c, fiber.StatusInternalServerError, err.Error())
 	}
 
 	// Group missing bank exceptions
@@ -80,7 +80,7 @@ func (h *handler) ProcessReconFiles(c *fiber.Ctx) error {
 		bankGroups["BANK"] = append(bankGroups["BANK"], b)
 	}
 
-	return c.JSON(fiber.Map{
+	return h.SendSuccess(c, fiber.Map{
 		"total_processed":   result.TotalProcessed,
 		"total_matched":     result.TotalMatched,
 		"total_unmatched":   result.TotalUnmatched,

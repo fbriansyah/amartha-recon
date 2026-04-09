@@ -2,10 +2,12 @@ package reconciliation
 
 import (
 	"github.com/fbriansyah/amartha-recon/port"
+	"github.com/fbriansyah/amartha-recon/presenter/api"
 	"github.com/gofiber/fiber/v2"
 )
 
 type handler struct {
+	api.BaseHandler
 	reconciliationSvc port.ReconciliationService
 }
 

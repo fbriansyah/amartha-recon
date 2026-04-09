@@ -19,13 +19,13 @@ func (h *handler) UploadBankCSV(c *fiber.Ctx) error {
 func (h *handler) handleUpload(c *fiber.Ctx, source string) error {
 	file, err := c.FormFile("file")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Failed to parse file upload: " + err.Error()})
+		return h.SendError(c, fiber.StatusBadRequest, "Failed to parse file upload: "+err.Error())
 	}
 
 	// Ensure the directory exists
 	dir := "storage/recon-files"
 	if err := os.MkdirAll(dir, 0755); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to create directory: " + err.Error()})
+		return h.SendError(c, fiber.StatusInternalServerError, "Failed to create directory: "+err.Error())
 	}
 
 	// Create unique file name
@@ -33,10 +33,10 @@ func (h *handler) handleUpload(c *fiber.Ctx, source string) error {
 
 	// Save file to destination
 	if err := c.SaveFile(file, filename); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to save file: " + err.Error()})
+		return h.SendError(c, fiber.StatusInternalServerError, "Failed to save file: "+err.Error())
 	}
 
-	return c.JSON(fiber.Map{
+	return h.SendSuccess(c, fiber.Map{
 		"message":  fmt.Sprintf("%s file uploaded successfully", source),
 		"filename": filename,
 	})
