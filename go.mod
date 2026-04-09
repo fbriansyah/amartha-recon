@@ -4,12 +4,13 @@ go 1.26.2
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.12
+	github.com/google/uuid v1.6.0
+	github.com/shopspring/decimal v1.4.0
 	github.com/spf13/cobra v1.10.2
 )
 
 require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
