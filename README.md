@@ -41,3 +41,15 @@ go run main.go serveHttp
 ```
 
 The server will start processing on `http://localhost:8080`.
+
+## Future Improvements (TODOs)
+
+Since this project is currently a Proof of Concept (POC), the following enhancements are recommended before transitioning to a production-ready state:
+
+- [ ] **Database Integration:** Move from file-based/in-memory storage to a robust relational database (e.g., PostgreSQL or MySQL) for persistent and reliable record keeping.
+- [ ] **Asynchronous Processing:** Implement a message broker (e.g., Kafka, RabbitMQ, or Redis queue) to handle large CSV uploads and reconciliation matching tasks asynchronously in the background.
+- [ ] **Authentication & Authorization:** Secure the API endpoints using robust methods like JWT, OAuth2, or API keys.
+- [ ] **Comprehensive Testing:** Add extensive unit and integration test coverage for core business logic, repositories, and API handlers.
+- [ ] **Observability:** Integrate structured logging (e.g., Zap or Logrus) and telemetry (e.g., OpenTelemetry, Prometheus, Grafana) for monitoring system health and performance.
+- [ ] **Pagination & Filtering:** Add robust pagination, filtering, and sorting capabilities to the GET APIs (especially for listing exceptions and transactions).
+- [ ] **CI/CD Pipeline:** Set up automated CI/CD pipelines (e.g., GitHub Actions, GitLab CI) for linting, testing, and building the application.
