@@ -13,7 +13,7 @@ func (h *handler) UploadSystemCSV(c *fiber.Ctx) error {
 }
 
 func (h *handler) UploadBankCSV(c *fiber.Ctx) error {
-	return h.handleUpload(c, "bank")
+	return h.handleUpload(c, "banks")
 }
 
 func (h *handler) handleUpload(c *fiber.Ctx, source string) error {
@@ -29,7 +29,7 @@ func (h *handler) handleUpload(c *fiber.Ctx, source string) error {
 	}
 
 	// Create unique file name
-	filename := fmt.Sprintf("%s/%s-%d-%s", dir, source, time.Now().Unix(), file.Filename)
+	filename := fmt.Sprintf("%s/%s/%d-%s", dir, source, time.Now().Unix(), file.Filename)
 
 	// Save file to destination
 	if err := c.SaveFile(file, filename); err != nil {
