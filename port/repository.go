@@ -1,14 +1,14 @@
 package port
 
-import "github.com/fbriansyah/amartha-recon/internal/model"
+import reconmodel "github.com/fbriansyah/amartha-recon/internal/model/recon"
 
 type ExceptionRepository interface {
-	SaveExceptions(exceptions []model.ExceptionRecord) error
-	FindExceptions() ([]model.ExceptionRecord, error)
-	FindExceptionByID(id string) (*model.ExceptionRecord, error)
+	SaveExceptions(exceptions []reconmodel.ExceptionRecord) error
+	FindExceptions() ([]reconmodel.ExceptionRecord, error)
+	FindExceptionByID(id string) (*reconmodel.ExceptionRecord, error)
 	UpdateStatus(id string, status string) error
-	
+
 	// Helper functions to fetch potential suggestions
-	FindSystemTrxByAmount(amount string) ([]model.SystemTrx, error)
-	SaveSystemTrx(trx []model.SystemTrx) error
+	FindSystemTrxByAmount(amount string) ([]reconmodel.SystemTrx, error)
+	SaveSystemTrx(trx []reconmodel.SystemTrx) error
 }

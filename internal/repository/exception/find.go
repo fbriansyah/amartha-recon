@@ -3,21 +3,21 @@ package exception
 import (
 	"errors"
 
-	"github.com/fbriansyah/amartha-recon/internal/model"
+	reconmodel "github.com/fbriansyah/amartha-recon/internal/model/recon"
 )
 
-func (r *ExceptionRepository) FindExceptions() ([]model.ExceptionRecord, error) {
+func (r *ExceptionRepository) FindExceptions() ([]reconmodel.ExceptionRecord, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
-	var result []model.ExceptionRecord
+	var result []reconmodel.ExceptionRecord
 	for _, e := range r.exceptions {
 		result = append(result, e)
 	}
 	return result, nil
 }
 
-func (r *ExceptionRepository) FindExceptionByID(id string) (*model.ExceptionRecord, error) {
+func (r *ExceptionRepository) FindExceptionByID(id string) (*reconmodel.ExceptionRecord, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
@@ -27,11 +27,11 @@ func (r *ExceptionRepository) FindExceptionByID(id string) (*model.ExceptionReco
 	return nil, errors.New("exception not found")
 }
 
-func (r *ExceptionRepository) FindSystemTrxByAmount(amount string) ([]model.SystemTrx, error) {
+func (r *ExceptionRepository) FindSystemTrxByAmount(amount string) ([]reconmodel.SystemTrx, error) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 
-	var result []model.SystemTrx
+	var result []reconmodel.SystemTrx
 	for _, trx := range r.systemTrx {
 		if trx.Amount.String() == amount {
 			result = append(result, trx)

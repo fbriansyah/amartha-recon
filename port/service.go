@@ -1,10 +1,10 @@
 package port
 
-import "github.com/fbriansyah/amartha-recon/internal/model"
+import reconmodel "github.com/fbriansyah/amartha-recon/internal/model/recon"
 
 type ReconciliationService interface {
-	Reconcile(systemTrx []model.SystemTrx, bankStatements []model.BankStatement) (*model.ReconciliationResult, error)
-	GetExceptions() ([]model.ExceptionRecord, error)
-	GetSuggestions(exceptionID string) ([]model.SystemTrx, error)
+	Reconcile(systemTrx []reconmodel.SystemTrx, bankStatements []reconmodel.BankStatement) (*reconmodel.ReconciliationResult, error)
+	GetExceptions() ([]reconmodel.ExceptionRecord, error)
+	GetSuggestions(exceptionID string) ([]reconmodel.SystemTrx, error)
 	ResolveException(exceptionID string, action string, systemTrxID *string) error
 }

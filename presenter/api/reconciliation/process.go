@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fbriansyah/amartha-recon/internal/model"
+	reconmodel "github.com/fbriansyah/amartha-recon/internal/model/recon"
 	"github.com/fbriansyah/amartha-recon/internal/service/reconciliation"
 	"github.com/gofiber/fiber/v2"
 )
@@ -38,8 +38,8 @@ func (h *handler) ProcessReconFiles(c *fiber.Ctx) error {
 	sysFiles, _ := filepath.Glob(filepath.Join(sysDir, "*.csv"))
 	bnkFiles, _ := filepath.Glob(filepath.Join(bnkDir, "*.csv"))
 
-	var systemTrxs []model.SystemTrx
-	var bankStatements []model.BankStatement
+	var systemTrxs []reconmodel.SystemTrx
+	var bankStatements []reconmodel.BankStatement
 
 	// Extract System CSVs bounded by date string or inside the CSV itself
 	for _, sf := range sysFiles {
@@ -73,7 +73,7 @@ func (h *handler) ProcessReconFiles(c *fiber.Ctx) error {
 	}
 
 	// Group missing bank exceptions
-	bankGroups := make(map[string][]model.ExceptionRecord)
+	bankGroups := make(map[string][]reconmodel.ExceptionRecord)
 	for _, b := range result.BankExceptions {
 		// we encoded raw string so we can parse it back, or just use BankID if it was available on root
 		// but since only ID is there we fall back to generic mapping, wait, raw json has BankID

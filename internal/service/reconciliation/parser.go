@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fbriansyah/amartha-recon/internal/model"
+	reconmodel "github.com/fbriansyah/amartha-recon/internal/model/recon"
 	"github.com/shopspring/decimal"
 )
 
-func ParseSystemCSV(filePath string) ([]model.SystemTrx, error) {
+func ParseSystemCSV(filePath string) ([]reconmodel.SystemTrx, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
@@ -20,13 +20,13 @@ func ParseSystemCSV(filePath string) ([]model.SystemTrx, error) {
 	reader := csv.NewReader(file)
 	// assuming ',' delimiter
 	reader.Comma = ','
-	
+
 	records, err := reader.ReadAll()
 	if err != nil {
 		return nil, err
 	}
 
-	var results []model.SystemTrx
+	var results []reconmodel.SystemTrx
 	// Skip header (trxID,Amount,Type,Date)
 	for i, row := range records {
 		if i == 0 {
@@ -37,12 +37,12 @@ func ParseSystemCSV(filePath string) ([]model.SystemTrx, error) {
 		}
 
 		amount, _ := decimal.NewFromString(row[1])
-		
-		var tType model.TransactionType
+
+		var tType reconmodel.TransactionType
 		if strings.ToUpper(row[2]) == "CREDIT" {
-			tType = model.Credit
+			tType = reconmodel.Credit
 		} else {
-			tType = model.Debit
+			tType = reconmodel.Debit
 		}
 
 		parsedTime, err := time.Parse("2006-01-02 15:04:05", row[3])
@@ -50,7 +50,7 @@ func ParseSystemCSV(filePath string) ([]model.SystemTrx, error) {
 			parsedTime, _ = time.Parse("2006-01-02", row[3]) // fallback
 		}
 
-		results = append(results, model.SystemTrx{
+		results = append(results, reconmodel.SystemTrx{
 			TrxID:           row[0],
 			Amount:          amount,
 			Type:            tType,
@@ -60,7 +60,7 @@ func ParseSystemCSV(filePath string) ([]model.SystemTrx, error) {
 	return results, nil
 }
 
-func ParseBankCSV(filePath string, bankID string) ([]model.BankStatement, error) {
+func ParseBankCSV(filePath string, bankID string) ([]reconmodel.BankStatement, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
@@ -70,13 +70,13 @@ func ParseBankCSV(filePath string, bankID string) ([]model.BankStatement, error)
 	reader := csv.NewReader(file)
 	// assuming ',' delimiter
 	reader.Comma = ','
-	
+
 	records, err := reader.ReadAll()
 	if err != nil {
 		return nil, err
 	}
 
-	var results []model.BankStatement
+	var results []reconmodel.BankStatement
 	// Skip header (ReferenceNo,Amount,Date)
 	for i, row := range records {
 		if i == 0 {
@@ -89,7 +89,7 @@ func ParseBankCSV(filePath string, bankID string) ([]model.BankStatement, error)
 		amount, _ := decimal.NewFromString(row[1])
 		parsedTime, _ := time.Parse("2006-01-02", strings.TrimSpace(row[2]))
 
-		results = append(results, model.BankStatement{
+		results = append(results, reconmodel.BankStatement{
 			BankID:           bankID,
 			UniqueIdentifier: row[0],
 			Amount:           amount,

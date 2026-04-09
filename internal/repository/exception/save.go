@@ -1,8 +1,8 @@
 package exception
 
-import "github.com/fbriansyah/amartha-recon/internal/model"
+import reconmodel "github.com/fbriansyah/amartha-recon/internal/model/recon"
 
-func (r *ExceptionRepository) SaveExceptions(exceptions []model.ExceptionRecord) error {
+func (r *ExceptionRepository) SaveExceptions(exceptions []reconmodel.ExceptionRecord) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -12,7 +12,7 @@ func (r *ExceptionRepository) SaveExceptions(exceptions []model.ExceptionRecord)
 	return nil
 }
 
-func (r *ExceptionRepository) SaveSystemTrx(trx []model.SystemTrx) error {
+func (r *ExceptionRepository) SaveSystemTrx(trx []reconmodel.SystemTrx) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 

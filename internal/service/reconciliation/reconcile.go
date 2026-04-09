@@ -5,7 +5,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/fbriansyah/amartha-recon/internal/model"
+	reconmodel "github.com/fbriansyah/amartha-recon/internal/model/recon"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
 )
@@ -30,9 +30,9 @@ func getLookbackDates(bankDate time.Time) []time.Time {
 	return dates
 }
 
-func (s *service) Reconcile(systemTrx []model.SystemTrx, bankStatements []model.BankStatement) (*model.ReconciliationResult, error) {
+func (s *service) Reconcile(systemTrx []reconmodel.SystemTrx, bankStatements []reconmodel.BankStatement) (*reconmodel.ReconciliationResult, error) {
 	// Group System records by Date -> Amount (String format for exact matching) -> List (Bucket)
-	buckets := make(map[string]map[string][]model.SystemTrx)
+	buckets := make(map[string]map[string][]reconmodel.SystemTrx)
 	tfmt := "2006-01-02"
 
 	for _, st := range systemTrx {
@@ -40,7 +40,7 @@ func (s *service) Reconcile(systemTrx []model.SystemTrx, bankStatements []model.
 		amtKey := st.Amount.String()
 
 		if _, ok := buckets[dateKey]; !ok {
-			buckets[dateKey] = make(map[string][]model.SystemTrx)
+			buckets[dateKey] = make(map[string][]reconmodel.SystemTrx)
 		}
 		buckets[dateKey][amtKey] = append(buckets[dateKey][amtKey], st)
 	}
@@ -56,8 +56,8 @@ func (s *service) Reconcile(systemTrx []model.SystemTrx, bankStatements []model.
 		}
 	}
 
-	var sysExceptions []model.ExceptionRecord
-	var bnkExceptions []model.ExceptionRecord
+	var sysExceptions []reconmodel.ExceptionRecord
+	var bnkExceptions []reconmodel.ExceptionRecord
 	bankTolerance := decimal.NewFromInt(5000)
 
 	totalProcessed := len(systemTrx) + len(bankStatements)
@@ -109,12 +109,12 @@ func (s *service) Reconcile(systemTrx []model.SystemTrx, bankStatements []model.
 
 		if !matched {
 			raw, _ := json.Marshal(bs)
-			bnkExceptions = append(bnkExceptions, model.ExceptionRecord{
+			bnkExceptions = append(bnkExceptions, reconmodel.ExceptionRecord{
 				ID:           uuid.NewString(), // assuming we use uuid
 				Source:       "BANK",
 				OriginalDate: bs.Date,
 				Amount:       bs.Amount,
-				Type:         model.Credit, // just default for PoC structure
+				Type:         reconmodel.Credit, // just default for PoC structure
 				RawData:      string(raw),
 				Status:       "OPEN",
 			})
@@ -126,7 +126,7 @@ func (s *service) Reconcile(systemTrx []model.SystemTrx, bankStatements []model.
 		for _, queue := range dayBuckets {
 			for _, st := range queue {
 				raw, _ := json.Marshal(st)
-				sysExceptions = append(sysExceptions, model.ExceptionRecord{
+				sysExceptions = append(sysExceptions, reconmodel.ExceptionRecord{
 					ID:           uuid.NewString(),
 					Source:       "SYSTEM",
 					OriginalDate: st.TransactionTime,
@@ -143,7 +143,7 @@ func (s *service) Reconcile(systemTrx []model.SystemTrx, bankStatements []model.
 	s.exceptionRepo.SaveSystemTrx(systemTrx)
 	s.exceptionRepo.SaveExceptions(allExceptions)
 
-	res := &model.ReconciliationResult{
+	res := &reconmodel.ReconciliationResult{
 		TotalProcessed:   totalProcessed,
 		TotalMatched:     totalMatched,
 		TotalUnmatched:   len(allExceptions),

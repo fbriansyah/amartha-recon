@@ -1,12 +1,12 @@
 package reconciliation
 
-import "github.com/fbriansyah/amartha-recon/internal/model"
+import reconmodel "github.com/fbriansyah/amartha-recon/internal/model/recon"
 
-func (s *service) GetExceptions() ([]model.ExceptionRecord, error) {
+func (s *service) GetExceptions() ([]reconmodel.ExceptionRecord, error) {
 	return s.exceptionRepo.FindExceptions()
 }
 
-func (s *service) GetSuggestions(exceptionID string) ([]model.SystemTrx, error) {
+func (s *service) GetSuggestions(exceptionID string) ([]reconmodel.SystemTrx, error) {
 	e, err := s.exceptionRepo.FindExceptionByID(exceptionID)
 	if err != nil {
 		return nil, err

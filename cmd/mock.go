@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/fbriansyah/amartha-recon/internal/model"
+	reconmodel "github.com/fbriansyah/amartha-recon/internal/model/recon"
 	"github.com/fbriansyah/amartha-recon/internal/repository/exception"
 	"github.com/fbriansyah/amartha-recon/internal/service/reconciliation"
 	"github.com/shopspring/decimal"
@@ -27,30 +27,30 @@ var mockCmd = &cobra.Command{
 		friday := time.Date(2026, time.April, 10, 15, 0, 0, 0, time.UTC)
 		// previous Sunday, April 12, 2026
 		sunday := time.Date(2026, time.April, 12, 12, 0, 0, 0, time.UTC)
-		
+
 		// Create dummy data
-		systemTrx := []model.SystemTrx{
+		systemTrx := []reconmodel.SystemTrx{
 			{
 				TrxID:           "SYS-001",
 				Amount:          decimal.NewFromInt(100000),
-				Type:            model.Credit,
+				Type:            reconmodel.Credit,
 				TransactionTime: friday, // Friday
 			},
 			{
 				TrxID:           "SYS-002",
 				Amount:          decimal.NewFromInt(50000),
-				Type:            model.Debit,
+				Type:            reconmodel.Debit,
 				TransactionTime: sunday, // Sunday
 			},
 			{
 				TrxID:           "SYS-003",
 				Amount:          decimal.NewFromInt(72000), // Won't match perfectly, has difference > 5000 from Bank
-				Type:            model.Debit,
+				Type:            reconmodel.Debit,
 				TransactionTime: sunday,
 			},
 		}
 
-		bankStatements := []model.BankStatement{
+		bankStatements := []reconmodel.BankStatement{
 			{
 				BankID:           "BNK-001",
 				UniqueIdentifier: "REF-001",
@@ -70,7 +70,6 @@ var mockCmd = &cobra.Command{
 				Date:             monday,
 			},
 		}
-
 
 		result, err := svc.Reconcile(systemTrx, bankStatements)
 		if err != nil {

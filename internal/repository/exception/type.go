@@ -3,18 +3,18 @@ package exception
 import (
 	"sync"
 
-	"github.com/fbriansyah/amartha-recon/internal/model"
+	reconmodel "github.com/fbriansyah/amartha-recon/internal/model/recon"
 )
 
 type ExceptionRepository struct {
-	exceptions map[string]model.ExceptionRecord
-	systemTrx  []model.SystemTrx
+	exceptions map[string]reconmodel.ExceptionRecord
+	systemTrx  []reconmodel.SystemTrx
 	mu         sync.RWMutex
 }
 
 func NewExceptionRepository() *ExceptionRepository {
 	return &ExceptionRepository{
-		exceptions: make(map[string]model.ExceptionRecord),
-		systemTrx:  make([]model.SystemTrx, 0),
+		exceptions: make(map[string]reconmodel.ExceptionRecord),
+		systemTrx:  make([]reconmodel.SystemTrx, 0),
 	}
 }
